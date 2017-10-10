@@ -65,8 +65,11 @@
 #define USBD_SELF_POWERED                     1
 #define USBD_DEBUG_LEVEL                      0
 
-/* AUDIO Class Config */
-#define USBD_AUDIO_FREQ                       48000
+/* DFU Class Config */
+#define USBD_DFU_MAX_ITF_NUM                   1
+#define USBD_DFU_XFER_SIZE                     1024   /* Max DFU Packet Size = 1024 bytes */
+#define USBD_DFU_APP_DEFAULT_ADD               0x08010000 /* The first 2 sectors (64 KB) reserved for DFU code */
+#define USBD_DFU_MAX_NB_OF_SECTORS             8 /* Max number of sectors */
 
 /* Exported macro ------------------------------------------------------------*/
 /* Memory management macros */   
@@ -74,6 +77,7 @@
 #define USBD_free                 free
 #define USBD_memset               memset
 #define USBD_memcpy               memcpy
+#define USBD_Delay                HAL_Delay
     
 /* DEBUG macros */  
 #if (USBD_DEBUG_LEVEL > 0)

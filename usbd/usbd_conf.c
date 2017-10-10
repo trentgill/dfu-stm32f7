@@ -383,8 +383,8 @@ USBD_StatusTypeDef USBD_LL_Init(USBD_HandleTypeDef *pdev)
   /* Initialize LL Driver */
   HAL_PCD_Init(&hpcd);
   
-  HAL_PCDEx_SetRxFiFo(&hpcd, 0x80);
-  HAL_PCDEx_SetTxFiFo(&hpcd, 0, 0x60);
+  HAL_PCDEx_SetRxFiFo(&hpcd, 0x80); // 0xA0 in DFU bootloader example
+  HAL_PCDEx_SetTxFiFo(&hpcd, 0, 0x60); // 0xA0 ...
 #endif
   
 #ifdef USE_USB_HS
@@ -419,7 +419,7 @@ USBD_StatusTypeDef USBD_LL_Init(USBD_HandleTypeDef *pdev)
   /* Initialize LL Driver */
   HAL_PCD_Init(&hpcd);
   
-  HAL_PCDEx_SetRxFiFo(&hpcd, 0x100);
+  HAL_PCDEx_SetRxFiFo(&hpcd, 0x100); // 0x200 in DFU example
   HAL_PCDEx_SetTxFiFo(&hpcd, 0, 0x200);
 #endif 
   

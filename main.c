@@ -8,6 +8,7 @@
 #include "lib/debug_hw.h"
 #include "lib/ONE_hw.h"
 #include "lib/led_pwm.h"
+#include "usbd/usbd_main.h"
 
 // private fn prototypes
 static void SystemClock_Config(void);
@@ -19,10 +20,21 @@ uint32_t kStartExecutionAddress = 0x08010000;
 
 typedef void (*pFunc)(void);
 void JumpTo(uint32_t address) {
+	// deinit USB here!!!
+
+	// Deinit open drivers
+	Debug_HW_Deinit();
+	Debug_USART_Deinit();
+	ONE_HW_Deinit();
+
+	HAL_DeInit();
+
     // Reinitialize the Stack pointer
     __set_MSP(*(__IO uint32_t*) address);
     // jump to application address
     ((pFunc) (*(__IO uint32_t*) (address + 4)))();
+    
+    while(1){}
 }
 
 // exported fns
@@ -31,7 +43,7 @@ uint32_t main(void)
 	// Configure low-level
 	MPU_Config();
 	CPU_CACHE_Enable();
-	HAL_Init();
+	HAL_Init(); // Flash ART accelerator on ITCM interface?!
 	SystemClock_Config();
 
 	// HW initialization
@@ -40,22 +52,37 @@ uint32_t main(void)
 	Debug_USART_printf("dfu bootload\n\r");
 	ONE_HW_Init();
 
-	PWM_set_level( MOTOR_L, 1.0 );
 	uint8_t tmp = 0;
-	while( !ONE_getstates( &tmp ) ){ // boot main with any key!
+	ONE_getstates( &tmp );
+	if( tmp != 1 ){
+		JumpTo(kStartExecutionAddress);
+	}
+	uint8_t arm = 0;
+	while( tmp <= 1 
+		&& arm == 0
+		 ){
+		PWM_set_level( MOTOR_L, 1.0 );
+
+		// init USB & check if present
+		usbd_main();
+
+		//run_bootloader();
+		
 		PWM_step();
+		// exit with keypress (should protect against this when programming)
+		if( ONE_getstates( &tmp )
+		 && tmp ){
+			JumpTo(kStartExecutionAddress);
+		}
 	}
 
-	// Deinit the low-level drivers
-	Debug_HW_Deinit();
-	Debug_USART_Deinit();
-	ONE_HW_Deinit();
 
-	HAL_DeInit();
+
+	
 
 	JumpTo(kStartExecutionAddress);
 
-	while(1){;;}
+	while(1){}
 	return 0;
 }
 

@@ -6,7 +6,6 @@ HALS=$(CUBE)/STM32F7xx_HAL_Driver/Src
 USBD=../STM32_Cube_F7/Middlewares/ST/STM32_USB_Device_Library
 WRLIB=../../wrLib
 WRDSP=../../wrDsp
-# $(PRJ_DIR) = /f7disco
 
 CC=arm-none-eabi-gcc
 LD=arm-none-eabi-gcc
@@ -30,9 +29,8 @@ STM32_INCLUDES = \
 	-I$(CUBE)/CMSIS/Include/ \
 	-I$(CUBE)/STM32F7xx_HAL_Driver/Inc/ \
 	-Iusbd/ \
-	-I$(USBD)/Class/AUDIO/Inc/ \
+	-I$(USBD)/Class/DFU/Inc/ \
 	-I$(USBD)/Core/Inc/ \
-	-I$(CUBE)/BSP/STM32F769I-Discovery/ \
 
 OPTIMIZE       = -Os
 
@@ -79,7 +77,7 @@ SRC = main.c \
 	$(USBD)/Core/Src/usbd_core.c \
 	$(USBD)/Core/Src/usbd_ctlreq.c \
 	$(USBD)/Core/Src/usbd_ioreq.c \
-	$(USBD)/Class/AUDIO/Src/usbd_audio.c \
+	$(USBD)/Class/DFU/Src/usbd_dfu.c \
 	$(WRLIB)/str_buffer.c \
 	$(WRLIB)/wrMath.c
 
@@ -112,7 +110,7 @@ $(BIN): $(EXECUTABLE)
 	@$(OBJDUMP) -x --syms $< > $(addsuffix .dmp, $(basename $<))
 	@echo "symbol table: $@.dmp"
 	@echo "Release: "$(R)
-	@stat -x main.bin | grep 'Size'
+	@stat -x $(TARGET).bin | grep 'Size'
 	@echo "        ^ must be less than 2MB (2,000,000)"
 
 flash: $(BIN)
