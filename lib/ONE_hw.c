@@ -1,8 +1,6 @@
 #include "ONE_hw.h"
 #include "debug_usart.h"
 #include "debug_hw.h"
-#include "adc.h"
-#include "dac.h"
 #include "led_pwm.h"
 
 // private declarations
@@ -31,8 +29,6 @@ uint8_t _getdetect( ONE_detect_t d );
 void ONE_HW_Init(void)
 {
 	PWM_Init();
-	ADC_Init();
-	DAC_Init();
 
 	GPIO_InitTypeDef gpio;
 
