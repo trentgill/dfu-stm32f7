@@ -3,6 +3,7 @@
 #include <stm32f7xx.h>
 
 #define ONE_LED_GPIO_RCC()		__HAL_RCC_GPIOD_CLK_ENABLE()
+#define ONE_LED_GPIO_RCC_D()	__HAL_RCC_GPIOD_CLK_DISABLE()
 #define ONE_LED_GPIO			GPIOD
 #define ONE_LED_MOTOR			GPIO_PIN_9
 #define ONE_LED_TOUCH			GPIO_PIN_11
@@ -10,6 +11,7 @@
 #define ONE_LED_OVER			GPIO_PIN_5
 
 #define ONE_MODE_LED_GPIO_RCC()	__HAL_RCC_GPIOB_CLK_ENABLE()
+#define ONE_MODE_LED_GPIO_RCC_D()	__HAL_RCC_GPIOB_CLK_DISABLE()
 #define ONE_MODE_LED_GPIO		GPIOB
 #define ONE_MODE_LED			GPIO_PIN_13
 
@@ -25,5 +27,6 @@ typedef enum
 	} ONE_led_t;
 
 void PWM_Init( void );
+void PWM_Deinit( void );
 void PWM_set_level( ONE_led_t ch, float level );
 void PWM_step( void );

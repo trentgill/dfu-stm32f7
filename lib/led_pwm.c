@@ -22,6 +22,11 @@ void PWM_Init( void )
 		pwm_states[i] = 0;
 	}
 }
+void PWM_Deinit( void )
+{
+	ONE_LED_GPIO_RCC_D();
+	ONE_MODE_LED_GPIO_RCC_D();
+}
 
 void PWM_set_level( ONE_led_t ch, float level )
 {

@@ -1,5 +1,5 @@
-TARGET=main
-EXECUTABLE=main.elf
+TARGET=boot
+EXECUTABLE=boot.elf
 
 CUBE=../STM32_Cube_F7/Drivers
 HALS=$(CUBE)/STM32F7xx_HAL_Driver/Src
@@ -34,7 +34,7 @@ STM32_INCLUDES = \
 	-I$(USBD)/Core/Inc/ \
 	-I$(CUBE)/BSP/STM32F769I-Discovery/ \
 
-OPTIMIZE       = -O2
+OPTIMIZE       = -Os
 
 CFLAGS += -std=c99
 CFLAGS += $(MCFLAGS)
@@ -57,27 +57,19 @@ SRC = main.c \
 	system_stm32f7xx.c \
 	stm32f7xx_hal_msp.c \
 	$(HALS)/stm32f7xx_hal.c \
-	$(HALS)/stm32f7xx_hal_adc.c \
-	$(HALS)/stm32f7xx_hal_adc_ex.c \
-	$(HALS)/stm32f7xx_hal_dac.c \
-	$(HALS)/stm32f7xx_hal_dac_ex.c \
 	$(HALS)/stm32f7xx_hal_cortex.c \
 	$(HALS)/stm32f7xx_hal_rcc.c \
 	$(HALS)/stm32f7xx_hal_rcc_ex.c \
 	$(HALS)/stm32f7xx_hal_flash.c \
 	$(HALS)/stm32f7xx_hal_flash_ex.c \
 	$(HALS)/stm32f7xx_hal_gpio.c \
-	$(HALS)/stm32f7xx_hal_i2c.c \
 	$(HALS)/stm32f7xx_hal_dma.c \
 	$(HALS)/stm32f7xx_hal_dma2d.c \
 	$(HALS)/stm32f7xx_hal_pwr.c \
 	$(HALS)/stm32f7xx_hal_pwr_ex.c \
 	$(HALS)/stm32f7xx_hal_pcd.c \
 	$(HALS)/stm32f7xx_hal_pcd_ex.c \
-	$(HALS)/stm32f7xx_hal_sai.c \
 	$(HALS)/stm32f7xx_hal_sd.c \
-	$(HALS)/stm32f7xx_hal_tim.c \
-	$(HALS)/stm32f7xx_hal_tim_ex.c \
 	$(HALS)/stm32f7xx_hal_usart.c \
 	$(HALS)/stm32f7xx_ll_fmc.c \
 	$(HALS)/stm32f7xx_ll_sdmmc.c \
@@ -89,8 +81,7 @@ SRC = main.c \
 	$(USBD)/Core/Src/usbd_ioreq.c \
 	$(USBD)/Class/AUDIO/Src/usbd_audio.c \
 	$(WRLIB)/str_buffer.c \
-	$(WRLIB)/wrMath.c \
-	$(WRDSP)/wrFilter.c
+	$(WRLIB)/wrMath.c
 
 OBJDIR = .
 OBJS = $(SRC:%.c=$(OBJDIR)/%.o)

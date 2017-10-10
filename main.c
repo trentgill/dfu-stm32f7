@@ -15,6 +15,16 @@ static void Error_Handler(void);
 static void MPU_Config(void);
 static void CPU_CACHE_Enable(void);
 
+uint32_t kStartExecutionAddress = 0x08010000;
+
+typedef void (*pFunc)(void);
+void JumpTo(uint32_t address) {
+    // Reinitialize the Stack pointer
+    __set_MSP(*(__IO uint32_t*) address);
+    // jump to application address
+    ((pFunc) (*(__IO uint32_t*) (address + 4)))();
+}
+
 // exported fns
 uint32_t main(void)
 {
@@ -27,14 +37,25 @@ uint32_t main(void)
 	// HW initialization
 	Debug_HW_Init();
     Debug_USART_Init();
-		Debug_USART_printf("dfu bootload\n\r");
-
+	Debug_USART_printf("dfu bootload\n\r");
 	ONE_HW_Init();
 
 	PWM_set_level( MOTOR_L, 1.0 );
-	while(1){
+	uint8_t tmp = 0;
+	while( !ONE_getstates( &tmp ) ){ // boot main with any key!
 		PWM_step();
 	}
+
+	// Deinit the low-level drivers
+	Debug_HW_Deinit();
+	Debug_USART_Deinit();
+	ONE_HW_Deinit();
+
+	HAL_DeInit();
+
+	JumpTo(kStartExecutionAddress);
+
+	while(1){;;}
 	return 0;
 }
 

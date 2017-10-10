@@ -6,6 +6,10 @@
 #define DBG_USART_USART_RCC()	__HAL_RCC_USART1_CLK_ENABLE()
 #define DMAx_CLK_ENABLE()		__HAL_RCC_DMA2_CLK_ENABLE()
 
+#define DBG_USART_GPIO_RCC_D()	__HAL_RCC_GPIOB_CLK_DISABLE()
+#define DBG_USART_USART_RCC_D()	__HAL_RCC_USART1_CLK_DISABLE()
+#define DMAx_CLK_ENABLE_D()		__HAL_RCC_DMA2_CLK_DISABLE()
+
 #define DBG_USART_baud			115200
 #define DBG_USARTx 				USART1
 #define DBG_USART_AF			GPIO_AF7_USART1
@@ -31,6 +35,7 @@
 
 // Setup functions & DMA/IT Handlers
 void Debug_USART_Init(void);
+void Debug_USART_Deinit(void);
 void USARTx_DMA_TX_IRQHandler(void);
 void USARTx_DMA_RX_IRQHandler(void);
 void HAL_USART_TxCpltCallback(USART_HandleTypeDef *husart);

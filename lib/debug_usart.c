@@ -10,6 +10,7 @@ str_buffer_t str_buf;
 
 #ifdef RELEASE
 void Debug_USART_Init(void){ return; }
+void Debug_USART_Deinit(void){ return; }
 void Debug_USART_putc(uint8_t c){ return; }
 void Debug_USART_printf(uint8_t *s){ return; }
 void Debug_USART_putn(uint32_t n){ return; }
@@ -32,11 +33,16 @@ void Debug_USART_Init( void )
 	str_buffer_init( &str_buf, 512 ); // fifo for DMA buffer
 }
 
+void Debug_USART_Deinit( void )
+{
+	HAL_USART_DeInit( &handusart );
+}
+
 // LOW LEVEL USART HARDWARE CONFIGURATION FUNCTION
+static DMA_HandleTypeDef hdma_tx;
+static DMA_HandleTypeDef hdma_rx;
 void HAL_USART_MspInit(USART_HandleTypeDef *hu )
 {
-	static DMA_HandleTypeDef hdma_tx;
-	static DMA_HandleTypeDef hdma_rx;
 
 	DBG_USART_USART_RCC();
 	DBG_USART_GPIO_RCC();
@@ -89,6 +95,19 @@ void HAL_USART_MspInit(USART_HandleTypeDef *hu )
 	HAL_NVIC_EnableIRQ(   USARTx_IRQn);
 }
 
+void HAL_USART_MspDeInit(USART_HandleTypeDef *hu )
+{
+	DBG_USART_USART_RCC_D();
+	DBG_USART_GPIO_RCC_D();
+	DMAx_CLK_ENABLE_D();
+
+	HAL_DMA_DeInit( &hdma_tx );
+	HAL_DMA_DeInit( &hdma_rx );
+
+	HAL_NVIC_DisableIRQ(   USARTx_DMA_TX_IRQn);
+	HAL_NVIC_DisableIRQ(USARTx_DMA_RX_IRQn);
+	HAL_NVIC_DisableIRQ(   USARTx_IRQn);
+}
 void USARTx_DMA_RX_IRQHandler( void )
 {
     static uint8_t s;

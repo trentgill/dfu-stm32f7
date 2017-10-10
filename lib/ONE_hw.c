@@ -57,7 +57,17 @@ void ONE_HW_Init(void)
 	HAL_GPIO_Init(ONE_SENSE_GPIO, &gpio);
 	HAL_NVIC_SetPriority(ONE_SENSE_IRQn, 0, 0); // HIGHEST PRIORITY!!
 	HAL_NVIC_EnableIRQ(ONE_SENSE_IRQn);
+}
 
+void ONE_HW_Deinit(void)
+{
+	PWM_Deinit();
+
+	ONE_PUSH_GPIO_RCC_D();
+	ONE_TOG_GPIO_RCC_D();
+	ONE_DETECT_GPIO_RCC_D();
+	ONE_SENSE_GPIO_RCC_D();
+	HAL_NVIC_DisableIRQ(ONE_SENSE_IRQn);
 }
 
 // States

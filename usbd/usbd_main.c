@@ -20,7 +20,7 @@ void usbd_main(void)
 }
 
 extern PCD_HandleTypeDef hpcd;
-extern SAI_HandleTypeDef haudio_out_sai;
+// extern SAI_HandleTypeDef haudio_out_sai;
 
 #ifdef USE_USB_FS
 void OTG_FS_IRQHandler(void)
