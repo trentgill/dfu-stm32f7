@@ -57,18 +57,19 @@ uint32_t main(void)
 	if( tmp != 1 ){
 		JumpTo(kStartExecutionAddress);
 	}
-	uint8_t arm = 0;
-	while( tmp <= 1 
-		&& arm == 0
-		 ){
-		PWM_set_level( MOTOR_L, 1.0 );
 
-		// init USB & check if present
-		usbd_main();
+	PWM_set_level( MOTOR_L, 1.0 );
+	PWM_step();
+// init USB
+	usbd_main();
 
-		//run_bootloader();
-		
+// check if USB-cable present
+	
+// wait for bootloader to finish
+	while( 1 ){ // bootload in IRQ
+		PWM_set_level( MOTOR_L, 1.0 ); // animate me!!
 		PWM_step();
+
 		// exit with keypress (should protect against this when programming)
 		if( ONE_getstates( &tmp )
 		 && tmp ){
