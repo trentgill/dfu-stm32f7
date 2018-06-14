@@ -6,9 +6,10 @@ HALS=$(CUBE)/STM32F7xx_HAL_Driver/Src
 USBD=../STM32_Cube_F7/Middlewares/ST/STM32_USB_Device_Library
 WRLIB=../../wrLib
 WRDSP=../../wrDsp
+PRJ_DIR=dfu-stm32f7
 
-CC=arm-none-eabi-gcc
-LD=arm-none-eabi-gcc
+CC=arm-none-eabi-gcc-4.9.3
+LD=arm-none-eabi-gcc-4.9.3
 AR=arm-none-eabi-ar
 AS=arm-none-eabi-as
 CP=arm-none-eabi-objcopy
@@ -18,9 +19,10 @@ OBJDUMP=arm-none-eabi-objdump
 BIN = $(TARGET).bin
 
 DEFS = -DUSE_STDPERIPH_DRIVER -DSTM32F7XX -DARM_MATH_CM7 -DHSE_VALUE=8000000
-STARTUP = $(CUBE)/CMSIS/Device/ST/STM32F7xx/Source/Templates/gcc/startup_stm32f765xx.s
+STARTUP = $(CUBE)/CMSIS/Device/ST/STM32F7xx/Source/Templates/gcc/startup_stm32f722xx.s
 
-MCFLAGS = -march=armv7e-m -mthumb 
+#MCFLAGS = -march=armv7e-m -mthumb
+MCFLAGS = -mthumb -march=armv7e-m -mfloat-abi=hard -mfpu=fpv4-sp-d16
 
 STM32_INCLUDES = \
 	-I$(WRLIB)/ \
@@ -35,6 +37,7 @@ STM32_INCLUDES = \
 OPTIMIZE       = -Os
 
 CFLAGS += -std=c99
+CFLAGS += -Wall
 CFLAGS += $(MCFLAGS)
 CFLAGS += $(OPTIMIZE)
 CFLAGS += $(DEFS) -I. -I./ $(STM32_INCLUDES)
@@ -43,8 +46,6 @@ CFLAGS += -fsingle-precision-constant -Wdouble-promotion
 R ?= 0
 ifeq ($(R), 1)
     CFLAGS += -DRELEASE
-else
-    CFLAGS += -DDEBUG
 endif
 
 LDFLAGS = -Wl,-T,stm32_flash.ld
@@ -67,10 +68,8 @@ SRC = main.c \
 	$(HALS)/stm32f7xx_hal_pwr_ex.c \
 	$(HALS)/stm32f7xx_hal_pcd.c \
 	$(HALS)/stm32f7xx_hal_pcd_ex.c \
-	$(HALS)/stm32f7xx_hal_sd.c \
 	$(HALS)/stm32f7xx_hal_usart.c \
 	$(HALS)/stm32f7xx_ll_fmc.c \
-	$(HALS)/stm32f7xx_ll_sdmmc.c \
 	$(HALS)/stm32f7xx_ll_usb.c \
 	$(wildcard lib/*.c) \
 	$(wildcard usbd/*.c) \
@@ -87,6 +86,15 @@ OBJS += Startup.o
 
 # C dependencies echoed into Makefile
 DEP = $(OBJS:.o=.d)  # one dependency file for each source
+
+# OS dependent size printing
+UNAME := $(shell uname)
+
+GETSIZE = stat
+
+ifeq ($(UNAME), Darwin)
+	GETSIZE = stat -x
+endif
 
 
 all: $(TARGET).hex $(BIN)
@@ -110,8 +118,8 @@ $(BIN): $(EXECUTABLE)
 	@$(OBJDUMP) -x --syms $< > $(addsuffix .dmp, $(basename $<))
 	@echo "symbol table: $@.dmp"
 	@echo "Release: "$(R)
-	@stat -x $(TARGET).bin | grep 'Size'
-	@echo "        ^ must be less than 2MB (2,000,000)"
+	@$(GETSIZE) $(TARGET).bin | grep 'Size'
+	@echo "        ^ must be less than 64kB (65,536)"
 
 flash: $(BIN)
 	st-flash write $(BIN) 0x08000000

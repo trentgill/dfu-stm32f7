@@ -5,9 +5,7 @@
 #include <stdlib.h>
 
 #include "lib/debug_usart.h"
-#include "lib/debug_hw.h"
-#include "lib/ONE_hw.h"
-#include "lib/led_pwm.h"
+#include "lib/debug_pin.h"
 #include "usbd/usbd_main.h"
 
 // private fn prototypes
@@ -23,9 +21,9 @@ void JumpTo(uint32_t address) {
 	// deinit USB here!!!
 
 	// Deinit open drivers
-	Debug_HW_Deinit();
-	Debug_USART_Deinit();
-	ONE_HW_Deinit();
+	//Debug_HW_Deinit();
+	Debug_USART_DeInit();
+	//ONE_HW_Deinit();
 
 	HAL_DeInit();
 
@@ -38,53 +36,36 @@ void JumpTo(uint32_t address) {
 }
 
 // exported fns
-uint32_t main(void)
+int main(void)
 {
 	// Configure low-level
 	MPU_Config();
 	CPU_CACHE_Enable();
-	HAL_Init(); // Flash ART accelerator on ITCM interface?!
+	HAL_Init();
 	SystemClock_Config();
 
 	// HW initialization
-	Debug_HW_Init();
+    Debug_Pin_Init();
     Debug_USART_Init();
-	Debug_USART_printf("dfu bootload\n\r");
-	ONE_HW_Init();
+	U_PrintLn("dfu bootload");
 
-	uint8_t tmp = 0;
-	ONE_getstates( &tmp );
-	if( tmp != 1 ){
-		JumpTo(kStartExecutionAddress);
-	}
+    U_PrintNow();
 
-	PWM_set_level( MOTOR_L, 1.0 );
-	PWM_step();
 // init USB
-	usbd_main();
+	//usbd_main();
 
 // check if USB-cable present
 	
 // wait for bootloader to finish
+    uint8_t tog;
 	while( 1 ){ // bootload in IRQ
-		PWM_set_level( MOTOR_L, 1.0 ); // animate me!!
-		PWM_step();
-
-		// exit with keypress (should protect against this when programming)
-		if( ONE_getstates( &tmp )
-		 && tmp ){
-			JumpTo(kStartExecutionAddress);
-		}
+        Debug_Pin_Set(tog); tog ^= 1;
 	}
-
-
-
-	
 
 	JumpTo(kStartExecutionAddress);
 
-	while(1){}
-	return 0;
+	while(1){} // wait for jump
+    return 0;  // won't reach here
 }
 
 // LOW LEVEL SYS INIT
@@ -92,11 +73,10 @@ static void SystemClock_Config(void)
 {
 	RCC_ClkInitTypeDef RCC_ClkInitStruct;
 	RCC_OscInitTypeDef RCC_OscInitStruct;
-	HAL_StatusTypeDef ret = HAL_OK;
-	
+
 	// Enable Power Control clock
 	__HAL_RCC_PWR_CLK_ENABLE();
-	__HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
+	__HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE2);
 
     RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
     RCC_OscInitStruct.HSEState       = RCC_HSE_ON;
