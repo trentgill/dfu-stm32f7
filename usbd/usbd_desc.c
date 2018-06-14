@@ -52,7 +52,7 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
-#define USBD_VID                      0x0484 // was 0x0483
+#define USBD_VID                      0x0483 // was 0x0483
 #define USBD_PID                      0xDF11 // was 0x5730 for audio
 #define USBD_LANGID_STRING            0x409
 #define USBD_MANUFACTURER_STRING      "STMicroelectronics"

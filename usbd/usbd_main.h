@@ -4,8 +4,8 @@
 #include "usbd_core.h"
 #include "usbd_desc.h"
 #include "usbd_dfu.h"
-#include "usbd_dfu_media.h"
+#include "usbd_dfu_flash.h"
 
 #define USE_USB_FS
 
-void usbd_main(void);
+void USB_DFU_Init(void);

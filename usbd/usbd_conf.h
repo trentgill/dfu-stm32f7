@@ -69,7 +69,7 @@
 #define USBD_DFU_MAX_ITF_NUM                   1
 #define USBD_DFU_XFER_SIZE                     1024   /* Max DFU Packet Size = 1024 bytes */
 #define USBD_DFU_APP_DEFAULT_ADD               0x08010000 /* The first 2 sectors (64 KB) reserved for DFU code */
-#define USBD_DFU_MAX_NB_OF_SECTORS             12 /* Max number of sectors */
+#define USBD_DFU_MAX_NB_OF_SECTORS             8 /* Max number of sectors */
 
 /* Exported macro ------------------------------------------------------------*/
 /* Memory management macros */   

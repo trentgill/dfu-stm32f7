@@ -1,8 +1,10 @@
-#include "usbd_dfu_media.h"
+#include "usbd_dfu_flash.h"
 #include "stm32f7xx_hal_conf.h"
 
-                                                // 2pages for bootloader, rest is free
-#define FLASH_DESC_STR      "@Internal Flash   /0x08000000/02*032Ka,02*032Kg,01*128Kg,07*256Kg"
+          // 2pages for bootloader, rest is free
+          // nb: 'a' is reserved (bootloader), 'g' is accessible
+          // Should move program to last 256kB, shrink dfu to 32kb
+#define FLASH_DESC_STR      "@Internal Flash   /0x08000000/04*016Ka,01*064Kg,03*128Kg"
 #define FLASH_ERASE_TIME    (uint16_t)50
 #define FLASH_PROGRAM_TIME  (uint16_t)50
 
@@ -193,26 +195,10 @@ static uint32_t GetSector(uint32_t Address)
   {
     sector = FLASH_SECTOR_6;  
   }
-  else// if((Address < ADDR_FLASH_SECTOR_8) && (Address >= ADDR_FLASH_SECTOR_7))
+  else
   {
     sector = FLASH_SECTOR_7;  
   }
-  /*else if((Address < ADDR_FLASH_SECTOR_9) && (Address >= ADDR_FLASH_SECTOR_8))
-  {
-    sector = FLASH_SECTOR_8;  
-  }
-  else if((Address < ADDR_FLASH_SECTOR_10) && (Address >= ADDR_FLASH_SECTOR_9))
-  {
-    sector = FLASH_SECTOR_9;  
-  }
-  else if((Address < ADDR_FLASH_SECTOR_11) && (Address >= ADDR_FLASH_SECTOR_10))
-  {
-    sector = FLASH_SECTOR_10;  
-  }
-  else
-  {
-    sector = FLASH_SECTOR_11;
-  }*/
   return sector;
 }
 

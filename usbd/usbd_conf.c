@@ -47,6 +47,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "usbd_main.h"
+#include "../lib/debug_usart.h"
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -383,7 +384,7 @@ USBD_StatusTypeDef USBD_LL_Init(USBD_HandleTypeDef *pdev)
   /* Initialize LL Driver */
   HAL_PCD_Init(&hpcd);
   
-  HAL_PCDEx_SetRxFiFo(&hpcd, 0xA0); // 0xA0 in DFU bootloader example
+  HAL_PCDEx_SetRxFiFo(&hpcd, 0xA0);
   HAL_PCDEx_SetTxFiFo(&hpcd, 0, 0xA0); // 0xA0 ...
 #endif
   

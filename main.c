@@ -52,7 +52,7 @@ int main(void)
     U_PrintNow();
 
 // init USB
-	//usbd_main();
+	USB_DFU_Init();
 
 // check if USB-cable present
 	

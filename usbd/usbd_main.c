@@ -4,7 +4,7 @@
 
 USBD_HandleTypeDef USBD_Device;
 
-void usbd_main(void)
+void USB_DFU_Init(void)
 {
   // Init Device Library
   USBD_Init(&USBD_Device, &DFU_Desc, 0);
@@ -12,7 +12,7 @@ void usbd_main(void)
   // Add Supported Class
   USBD_RegisterClass(&USBD_Device, USBD_DFU_CLASS);
   
-  // Add Interface callbacks for AUDIO Class
+  // Add Interface callbacks for DFU Class
   USBD_DFU_RegisterMedia(&USBD_Device, &USBD_DFU_Flash_fops);
   
   // Start Device Process
