@@ -8,36 +8,35 @@
 #include "lib/debug_pin.h"
 #include "usbd/usbd_main.h"
 
+#define GOTO_BOOT_ADDRESS  0x20006666
+#define GOTO_BOOT_MAGICNUM 0x66666666
+#define EXEC_ADDRESS       0x08010000
+
 // private fn prototypes
 static void SystemClock_Config(void);
 static void Error_Handler(void);
 static void MPU_Config(void);
 static void CPU_CACHE_Enable(void);
 
-uint32_t kStartExecutionAddress = 0x08010000;
-
 typedef void (*pFunc)(void);
-void JumpTo(uint32_t address) {
-	// deinit USB here!!!
-
-	// Deinit open drivers
-	//Debug_HW_Deinit();
-	Debug_USART_DeInit();
-	//ONE_HW_Deinit();
-
-	HAL_DeInit();
-
+static void JumpTo(uint32_t address)
+{
     // Reinitialize the Stack pointer
     __set_MSP(*(__IO uint32_t*) address);
     // jump to application address
     ((pFunc) (*(__IO uint32_t*) (address + 4)))();
-    
     while(1){}
 }
 
 // exported fns
 int main(void)
 {
+    // Check if magic RAM location is set
+    if( *(uint32_t*)(GOTO_BOOT_ADDRESS) != GOTO_BOOT_MAGICNUM ){ JumpTo(EXEC_ADDRESS); }
+
+    // If we're bootloading, first unset the bit
+    *(uint32_t*)(GOTO_BOOT_ADDRESS) = 0;
+
 	// Configure low-level
 	MPU_Config();
 	CPU_CACHE_Enable();
@@ -48,24 +47,23 @@ int main(void)
     Debug_Pin_Init();
     Debug_USART_Init();
 	U_PrintLn("dfu bootload");
-
     U_PrintNow();
 
 // init USB
 	USB_DFU_Init();
 
-// check if USB-cable present
-	
-// wait for bootloader to finish
-    uint8_t tog;
-	while( 1 ){ // bootload in IRQ
-        Debug_Pin_Set(tog); tog ^= 1;
-	}
+    while( USB_DFU_ongoing() ){
+        HAL_Delay(1000); U_PrintLn("."); U_PrintNow();
+    }
 
-	JumpTo(kStartExecutionAddress);
+// deinit hardware layer
+    USB_DFU_Deinit();
+	Debug_USART_DeInit();
+	HAL_DeInit();
 
-	while(1){} // wait for jump
-    return 0;  // won't reach here
+	JumpTo(EXEC_ADDRESS);
+
+    return 0;
 }
 
 // LOW LEVEL SYS INIT

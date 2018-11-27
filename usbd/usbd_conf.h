@@ -50,6 +50,7 @@
 #define __USBD_CONF_H
 
 /* Includes ------------------------------------------------------------------*/
+#include <stm32f7xx.h>
 #include "stm32f7xx_hal.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -103,6 +104,23 @@
 #else
 #define USBD_DbgLog(...)                         
 #endif
+
+
+// PIN DEFS
+#define USB_GPIO_RCC() __HAL_RCC_GPIOA_CLK_ENABLE()
+#define USB_RCC()      __HAL_RCC_USB_OTG_FS_CLK_ENABLE()
+#define USB_VBUS_PIN   GPIO_PIN_9
+#define USB_ID_PIN     GPIO_PIN_10
+#define USB_DM_PIN     GPIO_PIN_11
+#define USB_DP_PIN     GPIO_PIN_12
+#define USB_AF         GPIO_AF10_OTG_FS
+#define USB_GPIO       GPIOA
+
+#define USB_IRQn        OTG_FS_IRQn
+#define USB_Priority    5
+#define USB_SubPriority 0
+
+extern volatile uint8_t usb_is_connected;
 
 /* Exported functions ------------------------------------------------------- */
 

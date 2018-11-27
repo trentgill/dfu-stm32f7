@@ -9,3 +9,6 @@
 #define USE_USB_FS
 
 void USB_DFU_Init(void);
+void USB_DFU_Deinit(void);
+
+uint8_t USB_DFU_ongoing(void);

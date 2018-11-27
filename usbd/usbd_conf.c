@@ -47,6 +47,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "usbd_main.h"
+#include "usbd_conf.h"
 #include "../lib/debug_usart.h"
 
 /* Private typedef -----------------------------------------------------------*/
@@ -73,38 +74,34 @@ void HAL_PCD_MspInit(PCD_HandleTypeDef *hpcd)
   
   if(hpcd->Instance == USB_OTG_FS)
   {
-    /* Configure USB FS GPIOs */
-    __HAL_RCC_GPIOA_CLK_ENABLE();
+    USB_GPIO_RCC();
     
-    /* Configure DM DP Pins */
-    GPIO_InitStruct.Pin = (GPIO_PIN_11 | GPIO_PIN_12);
+    GPIO_InitStruct.Pin = (USB_DM_PIN | USB_DP_PIN);
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     GPIO_InitStruct.Speed = GPIO_SPEED_HIGH;
-    GPIO_InitStruct.Alternate = GPIO_AF10_OTG_FS;
-    HAL_GPIO_Init(GPIOA, &GPIO_InitStruct); 
+    GPIO_InitStruct.Alternate = USB_AF;
+    HAL_GPIO_Init(USB_GPIO, &GPIO_InitStruct);
     
-    /* Configure VBUS Pin */
-    GPIO_InitStruct.Pin = GPIO_PIN_9;
+    GPIO_InitStruct.Pin = USB_VBUS_PIN;
     GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
-    HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+    HAL_GPIO_Init(USB_GPIO, &GPIO_InitStruct);
     
-    /* Configure ID pin */
-    GPIO_InitStruct.Pin = GPIO_PIN_10;
+    GPIO_InitStruct.Pin = USB_ID_PIN;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_OD;
     GPIO_InitStruct.Pull = GPIO_PULLUP;
-    GPIO_InitStruct.Alternate = GPIO_AF10_OTG_FS;
-    HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+    GPIO_InitStruct.Alternate = USB_AF;
+    HAL_GPIO_Init(USB_GPIO, &GPIO_InitStruct);
     
     /* Enable USB FS Clock */
-    __HAL_RCC_USB_OTG_FS_CLK_ENABLE();
+    USB_RCC();
     
     /* Set USBFS Interrupt priority */
-    HAL_NVIC_SetPriority(OTG_FS_IRQn, 5, 0);
+    HAL_NVIC_SetPriority(USB_IRQn, USB_Priority, USB_SubPriority);
     
     /* Enable USBFS Interrupt */
-    HAL_NVIC_EnableIRQ(OTG_FS_IRQn);
+    HAL_NVIC_EnableIRQ(USB_IRQn);
   }
   else if(hpcd->Instance == USB_OTG_HS)
   {
@@ -336,9 +333,12 @@ void HAL_PCD_ISOINIncompleteCallback(PCD_HandleTypeDef *hpcd, uint8_t epnum)
   * @param  hpcd: PCD handle
   * @retval None
   */
+volatile uint8_t usb_is_connected = 0;
 void HAL_PCD_ConnectCallback(PCD_HandleTypeDef *hpcd)
 {
   USBD_LL_DevConnected(hpcd->pData);
+  usb_is_connected = 1;
+  U_PrintLn("connect");
 }
 
 /**
@@ -349,6 +349,8 @@ void HAL_PCD_ConnectCallback(PCD_HandleTypeDef *hpcd)
 void HAL_PCD_DisconnectCallback(PCD_HandleTypeDef *hpcd)
 {
   USBD_LL_DevDisconnected(hpcd->pData);
+  usb_is_connected = 0;
+  U_PrintLn("disconnect");
 }
 
 
