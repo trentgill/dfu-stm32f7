@@ -84,7 +84,7 @@ int main(void)
 	USB_DFU_Init();
 
     while( USB_DFU_ongoing() ){
-        HAL_Delay(1000); U_PrintLn("."); U_PrintNow();
+        HAL_Delay(1000); U_Print("."); U_PrintNow();
     }
 
 // deinit hardware layer
