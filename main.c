@@ -28,11 +28,42 @@ static void JumpTo(uint32_t address)
     while(1){}
 }
 
+#define I2Cx_SCL_GPIO_CLK_ENABLE()      __HAL_RCC_GPIOB_CLK_ENABLE()
+#define I2Cx_SCL_PIN                    GPIO_PIN_6
+#define I2Cx_SCL_GPIO_PORT              GPIOB
+uint8_t I2C_is_boot( void )
+{
+    uint8_t boot = 0;
+	GPIO_InitTypeDef gpio;
+	I2Cx_SCL_GPIO_CLK_ENABLE();
+	gpio.Pin       = I2Cx_SCL_PIN;
+	gpio.Mode      = GPIO_MODE_INPUT;
+	gpio.Pull      = GPIO_PULLUP;
+	gpio.Speed     = GPIO_SPEED_FREQ_HIGH;
+	HAL_GPIO_Init( I2Cx_SCL_GPIO_PORT, &gpio );
+
+    if( !HAL_GPIO_ReadPin( I2Cx_SCL_GPIO_PORT, I2Cx_SCL_PIN ) ){
+        boot = 1;
+    }
+
+    // set to OD to ensure no damage by i2c line
+    // FIXME is this necessary, or does DeInit set the pin to tristate?
+	gpio.Mode      = GPIO_MODE_AF_OD;
+	HAL_GPIO_Init( I2Cx_SCL_GPIO_PORT, &gpio );
+
+	HAL_GPIO_DeInit( I2Cx_SCL_GPIO_PORT, I2Cx_SCL_PIN );
+    return boot;
+}
+
 // exported fns
 int main(void)
 {
-    // Check if magic RAM location is set
-    if( *(uint32_t*)(GOTO_BOOT_ADDRESS) != GOTO_BOOT_MAGICNUM ){ JumpTo(EXEC_ADDRESS); }
+    if( !I2C_is_boot() ){
+        // Check if magic RAM location is set
+        if( *(uint32_t*)(GOTO_BOOT_ADDRESS) != GOTO_BOOT_MAGICNUM ){
+            JumpTo(EXEC_ADDRESS);
+        }
+    }
 
     // If we're bootloading, first unset the bit
     *(uint32_t*)(GOTO_BOOT_ADDRESS) = 0;
