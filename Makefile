@@ -4,8 +4,8 @@ EXECUTABLE=boot.elf
 CUBE=../STM32_Cube_F7/Drivers
 HALS=$(CUBE)/STM32F7xx_HAL_Driver/Src
 USBD=../STM32_Cube_F7/Middlewares/ST/STM32_USB_Device_Library
-WRLIB=../../wrLib
-WRDSP=../../wrDsp
+WRLIB=../wrLib
+WRDSP=../wrDsp
 PRJ_DIR=dfu-stm32f7
 
 CC=arm-none-eabi-gcc-4.9.3
