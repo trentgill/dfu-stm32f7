@@ -58,11 +58,9 @@ uint8_t I2C_is_boot( void )
 // exported fns
 int main(void)
 {
-    if( !I2C_is_boot() ){
-        // Check if magic RAM location is set
-        if( *(uint32_t*)(GOTO_BOOT_ADDRESS) != GOTO_BOOT_MAGICNUM ){
-            JumpTo(EXEC_ADDRESS);
-        }
+    if( !I2C_is_boot()
+     && *(uint32_t*)(GOTO_BOOT_ADDRESS) != GOTO_BOOT_MAGICNUM ){ // Check if magic RAM location is set
+        JumpTo(EXEC_ADDRESS);
     }
 
     // If we're bootloading, first unset the bit
