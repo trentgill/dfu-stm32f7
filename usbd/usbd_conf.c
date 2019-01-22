@@ -47,7 +47,6 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "usbd_main.h"
-#include "usbd_conf.h"
 #include "../lib/debug_usart.h"
 
 /* Private typedef -----------------------------------------------------------*/
