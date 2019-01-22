@@ -1,10 +1,13 @@
 #include "usbd_dfu_flash.h"
 #include "stm32f7xx_hal_conf.h"
 
-          // 2pages for bootloader, rest is free
+          // 3*16kb for bootloader
+          // 1*16kb for settings / calibration data
+          // 1*64kb for user lua script
+          // 3*128kb for main program (write program here)
           // nb: 'a' is reserved (bootloader), 'g' is accessible
           // Should move program to last 256kB, shrink dfu to 32kb
-#define FLASH_DESC_STR      "@Internal Flash   /0x08000000/04*016Ka,01*064Kg,03*128Kg"
+#define FLASH_DESC_STR      "@Internal Flash   /0x08000000/03*016Ka,01*016Kg,01*64Kg,03*128Kg"
 #define FLASH_ERASE_TIME    (uint16_t)50
 #define FLASH_PROGRAM_TIME  (uint16_t)50
 
