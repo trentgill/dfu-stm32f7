@@ -119,7 +119,7 @@ $(BIN): $(EXECUTABLE)
 	@echo "symbol table: $@.dmp"
 	@echo "Release: "$(R)
 	@$(GETSIZE) $(TARGET).bin | grep 'Size'
-	@echo "        ^ must be less than 64kB (65,536)"
+	@echo "        ^ must be less than 48kB (48,000)"
 
 flash: $(BIN)
 	st-flash write $(BIN) 0x08000000
