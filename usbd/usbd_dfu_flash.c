@@ -51,6 +51,7 @@ uint16_t Flash_If_DeInit(void)
 { 
   /* Lock the internal flash */
   HAL_FLASH_Lock();
+  NVIC_SystemReset();
   return 0;
 }
 
