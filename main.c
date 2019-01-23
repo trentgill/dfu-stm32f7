@@ -10,7 +10,7 @@
 
 #define GOTO_BOOT_ADDRESS  0x20006666
 #define GOTO_BOOT_MAGICNUM 0x66666666
-#define EXEC_ADDRESS       0x08010000
+#define EXEC_ADDRESS       0x08020000
 
 // private fn prototypes
 static void SystemClock_Config(void);
