@@ -9,6 +9,7 @@ str_buffer_t str_buf;
 
 #ifdef RELEASE
 void Debug_USART_Init(void){ return; }
+void Debug_USART_DeInit(void){ return; }
 void U_PrintNow(void){ return; }
 void U_Print(char* s){ return; }
 void U_PrintLn(char* s){ return; }
