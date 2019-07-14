@@ -5,7 +5,7 @@
 #include "str_buffer.h"
 
 USART_HandleTypeDef handusart;
-str_buffer_t str_buf;
+str_buffer_t* str_buf;
 
 #ifdef RELEASE
 void Debug_USART_Init(void){ return; }
@@ -31,13 +31,13 @@ void Debug_USART_Init( void )
 	handusart.Init.Mode       = USART_MODE_TX_RX;
 	HAL_USART_Init( &handusart );
 
-	str_buffer_init( &str_buf, 512 ); // fifo for DMA buffer
+	str_buf = str_buffer_init( 512 ); // fifo for DMA buffer
 }
 
 void Debug_USART_DeInit(void)
 {
 	HAL_USART_DeInit( &handusart );
-	str_buffer_deinit( &str_buf );
+	str_buffer_deinit( str_buf );
 }
 
 
@@ -127,13 +127,13 @@ void USARTx_IRQHandler( void )
 void U_PrintNow( void )
 {
 	if( HAL_USART_GetState( &handusart ) == HAL_USART_STATE_READY
-	 && !str_buffer_empty( &str_buf ) ){
+	 && !str_buffer_empty( str_buf ) ){
 // mask interrupts to ensure transmission!
 uint32_t old_primask = __get_PRIMASK();
 __disable_irq();
-	    uint16_t str_len = str_buffer_len( &str_buf );
+	    uint16_t str_len = str_buffer_len( str_buf );
 	    HAL_USART_Transmit_DMA( &handusart
-	                          , (uint8_t*)str_buffer_dequeue( &str_buf, str_len )
+	                          , (uint8_t*)str_buffer_dequeue( str_buf, str_len )
                               , str_len
 						      );
 __set_PRIMASK( old_primask );
@@ -143,7 +143,7 @@ __set_PRIMASK( old_primask );
 
 void U_Print(char* s)
 {
-	str_buffer_enqueue( &str_buf, s );
+	str_buffer_enqueue( str_buf, s );
     U_PrintNow();
 }
 void U_PrintLn(char* s)
@@ -154,7 +154,7 @@ void U_PrintLn(char* s)
 	strcpy( my_str, s );
 	strcpy( &my_str[len], "\n\r\0" );
     
-    str_buffer_enqueue( &str_buf, my_str );
+    str_buffer_enqueue( str_buf, my_str );
     U_PrintNow();
 }
 void U_PrintU32(uint32_t n)
