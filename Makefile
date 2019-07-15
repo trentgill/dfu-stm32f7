@@ -1,5 +1,5 @@
 TARGET=boot
-EXECUTABLE=boot.elf
+EXECUTABLE=$(TARGET).elf
 
 CUBE=../STM32_Cube_F7/Drivers
 HALS=$(CUBE)/STM32F7xx_HAL_Driver/Src
@@ -42,6 +42,7 @@ CFLAGS += $(MCFLAGS)
 CFLAGS += $(OPTIMIZE)
 CFLAGS += $(DEFS) -I. -I./ $(STM32_INCLUDES)
 CFLAGS += -fsingle-precision-constant -Wdouble-promotion
+CFLAGS += -fno-common
 
 R ?= 0
 ifeq ($(R), 1)
