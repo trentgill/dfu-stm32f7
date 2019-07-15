@@ -22,9 +22,7 @@ void DAC_Init(void)
     dac_spi.Init.CRCCalculation    = SPI_CRCCALCULATION_DISABLE;
     dac_spi.Init.CRCPolynomial     = 7;
 
-        U_PrintLn("spi");
     if(HAL_SPI_Init(&dac_spi) != HAL_OK){ U_PrintLn("!spi_init"); }
-        U_PrintLn(">spi");
 
     // NRST & NSS both high
     HAL_GPIO_WritePin( SPId_NSS_GPIO_PORT, SPId_NSS_PIN, GPIO_PIN_SET );
@@ -98,7 +96,6 @@ void DAC_SetU16( int8_t channel, uint16_t value )
 void DAC_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi)
 {
     // signal end of transmission by pulling NSS high
-    U_PrintLn("txcplt");
     HAL_GPIO_WritePin( SPId_NSS_GPIO_PORT, SPId_NSS_PIN, 1 );
 }
 

@@ -79,6 +79,13 @@ int main(void)
 	U_PrintLn("dfu bootload");
     U_PrintNow();
 
+    DAC_Init();
+    U_PrintNow();
+    DAC_SetU16( DAC_ALL_CHANNELS
+              , DAC_U16_0V
+              );
+    DAC_Update();
+
 // init USB
 	USB_DFU_Init();
 
