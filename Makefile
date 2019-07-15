@@ -69,6 +69,7 @@ SRC = main.c \
 	$(HALS)/stm32f7xx_hal_pwr_ex.c \
 	$(HALS)/stm32f7xx_hal_pcd.c \
 	$(HALS)/stm32f7xx_hal_pcd_ex.c \
+	$(HALS)/stm32f7xx_hal_spi.c \
 	$(HALS)/stm32f7xx_hal_usart.c \
 	$(HALS)/stm32f7xx_ll_fmc.c \
 	$(HALS)/stm32f7xx_ll_usb.c \

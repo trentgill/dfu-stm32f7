@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "lib/dac8565.h"
 #include "lib/debug_usart.h"
 #include "lib/debug_pin.h"
 #include "usbd/usbd_main.h"
