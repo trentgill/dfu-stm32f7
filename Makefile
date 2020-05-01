@@ -43,13 +43,15 @@ CFLAGS += $(OPTIMIZE)
 CFLAGS += $(DEFS) -I. -I./ $(STM32_INCLUDES)
 CFLAGS += -fsingle-precision-constant -Wdouble-promotion
 CFLAGS += -fno-common
+CFLAGS += -flto
+CFLAGS += -ffunction-sections -fdata-sections
 
 R ?= 0
 ifeq ($(R), 1)
     CFLAGS += -DRELEASE
 endif
 
-LDFLAGS = -Wl,-T,stm32_flash.ld
+LDFLAGS = -Wl,-T,stm32_flash.ld,-flto,-gc-sections
 LIBS = -lm -lc -lnosys
 
 SRC = main.c \
