@@ -8,8 +8,8 @@ WRLIB=../wrLib
 WRDSP=../wrDsp
 PRJ_DIR=dfu-stm32f7
 
-CC=arm-none-eabi-gcc-4.9.3
-LD=arm-none-eabi-gcc-4.9.3
+CC=arm-none-eabi-gcc
+LD=arm-none-eabi-gcc
 AR=arm-none-eabi-ar
 AS=arm-none-eabi-as
 CP=arm-none-eabi-objcopy
@@ -43,7 +43,7 @@ CFLAGS += $(OPTIMIZE)
 CFLAGS += $(DEFS) -I. -I./ $(STM32_INCLUDES)
 CFLAGS += -fsingle-precision-constant -Wdouble-promotion
 CFLAGS += -fno-common
-CFLAGS += -flto
+#CFLAGS += -flto
 CFLAGS += -ffunction-sections -fdata-sections
 
 R ?= 0
@@ -51,7 +51,8 @@ ifeq ($(R), 1)
     CFLAGS += -DRELEASE
 endif
 
-LDFLAGS = -Wl,-T,stm32_flash.ld,-flto,-gc-sections
+#LDFLAGS = -Wl,-T,stm32_flash.ld,-flto,-gc-sections
+LDFLAGS = -Wl,-T,stm32_flash.ld,-gc-sections
 LIBS = -lm -lc -lnosys
 
 SRC = main.c \
