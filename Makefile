@@ -8,8 +8,10 @@ WRLIB=../wrLib
 WRDSP=../wrDsp
 PRJ_DIR=dfu-stm32f7
 
-CC=arm-none-eabi-gcc-4.9.3
-LD=arm-none-eabi-gcc-4.9.3
+CC=arm-none-eabi-gcc
+LD=arm-none-eabi-gcc
+#CC=arm-none-eabi-gcc-4.9.3
+#LD=arm-none-eabi-gcc-4.9.3
 AR=arm-none-eabi-ar
 AS=arm-none-eabi-as
 CP=arm-none-eabi-objcopy
